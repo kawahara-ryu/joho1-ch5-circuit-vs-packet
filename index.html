@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黒電話ねこ vs 小包ねこ 〜回線交換・パケット交換・小規模LANの通信実験室〜</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;900&family=Courier+Prime:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=noc_cyber_2.0">
+</head>
+<body>
+    <!-- 上部ステータスバー（ポップ・カフェ＆通信ラボ風） -->
+    <header class="postal-header">
+        <div class="postal-brand">
+            <span class="post-mark">🐾</span>
+            <span class="brand-text">ねこカフェ通信ラボ（第5章：パケット通信＆小規模LAN体験）</span>
+        </div>
+        <div class="header-controls">
+            <button id="review-open-btn" class="retro-btn btn-small" onclick="openReviewModal()">📖 通信とLANの仕組み図鑑</button>
+            <button id="mute-btn" class="retro-btn btn-small" onclick="toggleMute()">🔇 消音中</button>
+        </div>
+    </header>
+
+    <!-- 画面1: タイトル画面 -->
+    <main id="screen-title" class="screen active">
+        <div class="airmail-frame">
+            <div class="document-sheet">
+                <div class="doc-stamp-top">✨ 体験ミッション / 情報I 第5章 ネットワーク</div>
+                <h1 class="main-title">
+                    <span class="u-title-chunk">黒電話ねこ vs</span>
+                    <span class="u-title-chunk">小包ねこ</span>
+                </h1>
+                <p class="sub-title">
+                    <span class="u-title-chunk">〜回線交換・</span><span class="u-title-chunk">パケット交換・</span><span class="u-title-chunk">小規模LANの</span><span class="u-title-chunk">仁義なき通信実験〜</span>
+                </p>
+
+                <div class="vs-showcase">
+                    <div class="char-card card-madam">
+                        <div class="card-tag tag-circuit">📞 【旧式】回線交換方式</div>
+                        <img src="./madam_cat.png" alt="長電話マダム猫" class="char-illust">
+                        <div class="char-caption">
+                            <strong>長電話マダム猫</strong>
+                            <span>
+                                <span class="u-title-chunk">「無言でお茶を飲む時間も</span><span class="u-title-chunk">回線はわたくしの独占ざます！」</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="vs-emblem">VS</div>
+
+                    <div class="char-card card-operator">
+                        <div class="card-tag tag-packet">📦 【現代】パケット交換＆LAN</div>
+                        <img src="./operator_cat.png" alt="小包通信ねこ" class="char-illust">
+                        <div class="char-caption">
+                            <strong>小包通信ねこ（あなた）</strong>
+                            <span>
+                                <span class="u-title-chunk">「適度な小包に分けて</span><span class="u-title-chunk">LANからWANへ届けるニャ！」</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="story-memo">
+                    <div class="memo-title">📌 きょうの体験メニュー（全5ステップ・直感ラボ）</div>
+                    <p class="memo-body">
+                        ねこ村の通信網がいま大パンク中！成金マダム猫が「黒電話（回線交換）」で村に1本しかない通信ケーブルを独占しているため、消防や宅配の連絡がまったく届かないニャ。<br>
+                        あなたの手でスイッチ盤・分割機・ルータ分岐器・LAN配線盤を操作し、<strong>「なぜその仕組みが必要なのか」</strong>を失敗と成功を通して体感するニャ！
+                    </p>
+                    <ol class="step-preview-list">
+                        <li><strong>STEP 1（回線交換）：</strong>マダム猫の「無言の紅茶タイム（0バイト）」でも回線が塞がる非効率と強制切断レバー</li>
+                        <li><strong>STEP 2（パケット分割）：</strong>「切らない」「20分割みじん切り」「4分割」の通信量メーター比較と<span class="term-tip">ヘッダ<span class="term-tip-popup"><span class="term-tip-header">🏷 ヘッダ（荷札）</span>パケットの先頭に付く宛先・通し番号ニャ！</span></span>荷札貼り</li>
+                        <li><strong>STEP 3（経路制御と追い越し）：</strong>手動ルータ切替！渋滞による「追い越し（着順前後）」と落雷による2番欠損・う回を体験</li>
+                        <li><strong>STEP 4（TCP vs UDP）：</strong>通し番号の「歯抜け検知（ACK・再送要求）」＆番号順復元のTCPと、即再生UDPの比較</li>
+                        <li><strong>STEP 5（小規模LAN分岐配線）：</strong>ハブから有線・無線に分岐する配線パズルと、「LAN内印刷・WAN通信・屋外断線時」の3大実験</li>
+                    </ol>
+                </div>
+
+                <div class="title-action-row">
+                    <button class="retro-btn btn-primary btn-large pulse-guide" onclick="startExperiment()">
+                        ▶ 通信局のデスクに着任する（全5STEP スタート！）
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 画面2: 実習メイン画面（2カラム：左＝局員デスク案内、右＝実機操作パネル） -->
+    <main id="screen-game" class="screen">
+        <!-- 工程プログレスバー（クリックで任意の工程へ移動可能） -->
+        <div class="stage-bar">
+            <div class="step-roadmap-wrap">
+                <div class="step-roadmap-track" id="step-roadmap-track">
+                    <div class="step-roadmap-fill" id="step-roadmap-fill" style="width: 10%;"></div>
+                </div>
+                <div class="stage-steps">
+                    <button type="button" class="step-pill active" id="pill-1" onclick="jumpToStage(1)" title="クリックでこのSTEPへ移動">
+                        <span class="step-pill-icon">📞</span>
+                        <div class="step-pill-body">
+                            <span class="step-pill-title">STEP 1</span>
+                            <span class="step-pill-sub">回線交換・無言独占</span>
+                        </div>
+                    </button>
+                    <button type="button" class="step-pill" id="pill-2" onclick="jumpToStage(2)" title="クリックでこのSTEPへ移動">
+                        <span class="step-pill-icon">✂</span>
+                        <div class="step-pill-body">
+                            <span class="step-pill-title">STEP 2</span>
+                            <span class="step-pill-sub">パケット分割・荷札</span>
+                        </div>
+                    </button>
+                    <button type="button" class="step-pill" id="pill-3" onclick="jumpToStage(3)" title="クリックでこのSTEPへ移動">
+                        <span class="step-pill-icon">⚡</span>
+                        <div class="step-pill-body">
+                            <span class="step-pill-title">STEP 3</span>
+                            <span class="step-pill-sub">ルータ迂回・渋滞</span>
+                        </div>
+                    </button>
+                    <button type="button" class="step-pill" id="pill-4" onclick="jumpToStage(4)" title="クリックでこのSTEPへ移動">
+                        <span class="step-pill-icon">📻</span>
+                        <div class="step-pill-body">
+                            <span class="step-pill-title">STEP 4</span>
+                            <span class="step-pill-sub">TCP確実 vs UDP即時</span>
+                        </div>
+                    </button>
+                    <button type="button" class="step-pill" id="pill-5" onclick="jumpToStage(5)" title="クリックでこのSTEPへ移動">
+                        <span class="step-pill-icon">🌐</span>
+                        <div class="step-pill-body">
+                            <span class="step-pill-title">STEP 5</span>
+                            <span class="step-pill-sub">小規模LAN・境界</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="traffic-hud-card" id="traffic-hud">
+                <span class="hud-label">📡 幹線占有率:</span>
+                <div class="hud-bar-track"><div class="hud-bar-fill" id="hud-traffic-fill"></div></div>
+                <span class="hud-val mono-num" id="hud-traffic-val">0%</span>
+            </div>
+            <div class="score-plate">
+                🏆 SCORE: <span id="score-val" class="mono-num">0</span> pt
+                <span class="miss-counter">（ミス: <span id="miss-val" class="mono-num">0</span>回）</span>
+            </div>
+        </div>
+
+        <div class="workspace-grid">
+            <!-- 左カラム：通信局キャラクター＆業務連絡メモ -->
+            <aside class="operator-column">
+                <div class="id-card-box">
+                    <div class="id-card-header" id="speaker-role">🐾 通信ラボ・ナビねこ</div>
+                    <div class="id-photo-wrap mood-normal" id="speaker-photo-wrap">
+                        <span class="emotion-badge" id="speaker-emotion-badge">💡 ナビ中</span>
+                        <img src="./operator_cat.png" id="speaker-img" alt="通信ねこ" class="speaker-avatar">
+                    </div>
+                    <div class="speech-sheet" id="speech-text">
+                        現場に着任したニャ！まずは昔の電話と同じ「回線交換方式」がどう動くか、スイッチ盤で試してみるニャ！
+                    </div>
+                </div>
+
+                <!-- 現場用語メモ帳（常に現在の工程の重要キーワードが紙の付箋で貼られる） -->
+                <div class="sticky-note" id="keyword-note">
+                    <div class="sticky-pin">📌 ここがテストに出る！重要メモ</div>
+                    <div class="sticky-title" id="note-title">回線交換方式とは？</div>
+                    <div class="sticky-desc" id="note-desc">
+                        通信する2人の間で「1本の専用回線」を最初から最後まで繋ぎっぱなしにする方式。通話品質は安定するが、無言の時間も回線を占有し、他の人が一切使えない。
+                    </div>
+                </div>
+            </aside>
+
+            <!-- 右カラム：実機操作ワークベンチ -->
+            <section class="workbench-column">
+                <div class="workbench-board" id="workbench-board">
+                    <div class="board-header">
+                        <h2 id="stage-heading" class="board-title">
+                            <span class="u-title-chunk">【STEP 1】</span>
+                            <span class="u-title-chunk">黒電話交換盤と</span>
+                            <span class="u-title-chunk">「無言独占」の悲劇</span>
+                        </h2>
+                        <span class="board-badge" id="stage-status-badge">操作待機中</span>
+                    </div>
+
+                    <!-- 動的ステージ描画コンテナ -->
+                    <div id="stage-mount" class="stage-mount packet-track">
+                        <!-- JSで各工程の実機UIをレンダリング -->
+                    </div>
+
+                    <!-- 実機下部：ライブ実況ログ -->
+                    <div class="ticker-tape-box">
+                        <div class="ticker-label">💬 LIVEログ</div>
+                        <div class="ticker-text mono-num" id="ticker-log">実験スタート！スイッチ盤のボタンを押してみよう！</div>
+                    </div>
+                </div>
+
+                <!-- はんこスタンプ演出レイヤー -->
+                <div id="hankostamp" class="hanko-stamp hidden">合格</div>
+            </section>
+        </div>
+    </main>
+
+    <!-- 画面3: 業務完了報告書（クリア画面） -->
+    <main id="screen-clear" class="screen">
+        <div class="airmail-frame">
+            <div class="document-sheet clear-sheet">
+                <div class="doc-stamp-top">業務完了認定証 / ねこ村通信局</div>
+                <h2 class="clear-title">
+                    <span class="u-title-chunk">通信インフラ＆LAN改革</span>
+                    <span class="u-title-chunk">完了報告書</span>
+                </h2>
+
+                <div class="report-top-grid">
+                    <div class="report-char-box">
+                        <img src="./operator_cat.png" alt="通信ねこ" class="clear-illust">
+                        <div class="final-rank-stamp" id="final-rank">特級</div>
+                    </div>
+                    <div class="report-summary-table">
+                        <table class="ledger-table">
+                            <tr>
+                                <th>任命ランク</th>
+                                <td id="final-title-name"><strong>特命ネットワーク総括技師（最高評価）</strong></td>
+                            </tr>
+                            <tr>
+                                <th>最終業務スコア</th>
+                                <td><strong id="final-score" class="mono-num">500</strong> 点 / 500 点（ミス回数: <span id="final-misses" class="mono-num">0</span> 回）</td>
+                            </tr>
+                            <tr>
+                                <th>支給報酬</th>
+                                <td id="final-reward">高級ちゅ〜る 1年分 ＋ 黄金のLANケーブル勲章</td>
+                            </tr>
+                            <tr>
+                                <th>局長総評</th>
+                                <td id="final-comment">完璧な手さばきニャ！パケット分割の適量判断から、TCP/UDPの使い分け、小規模LANの構築まで文句なしの特級技師ニャ！</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 比較まとめ表（一目で頭に入る紙の対比表） -->
+                <div class="comparison-sheet">
+                    <div class="sheet-caption">■ 実習で体験した「通信方式＆LAN機器」の重要ポイント対比表</div>
+                    <table class="compare-table">
+                        <thead>
+                            <tr>
+                                <th class="col-item">比較項目</th>
+                                <th class="col-circuit">【旧式】回線交換 / UDPの特徴</th>
+                                <th class="col-packet" style="background:#00F59B !important; color:#050B14 !important; font-weight:900 !important; text-shadow:none !important;">【現代】パケット交換 / TCP / LANの本質</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th class="col-item">回線の利用効率</th>
+                                <td><strong>回線交換</strong>：無言の時間も1組で回線を<strong>独占</strong>し、他は「話し中」になる</td>
+                                <td><strong>パケット交換</strong>：適度な小包に分けて<strong>1本の回線を複数人で共有</strong>できる</td>
+                            </tr>
+                            <tr>
+                                <th class="col-item">分割サイズの罠</th>
+                                <td><strong>切らない</strong>：巨大データが道を塞ぐ<br><strong>細かく切りすぎ</strong>：<strong>ヘッダ（荷札）ばかり増えて</strong>効率低下</td>
+                                <td><strong>適度なサイズ</strong>に分割し、先頭に<strong>ヘッダ（宛先IP・通し番号）</strong>を貼る</td>
+                            </tr>
+                            <tr>
+                                <th class="col-item">TCP と UDP</th>
+                                <td><strong>UDP（速度・即時性重視）</strong>：欠けても再送せずそのまま即再生（通話・生配信向き）</td>
+                                <td><strong>TCP（信頼性・確実性重視）</strong>：欠損を<strong>再送要求</strong>し、番号順に復元（Web・注文書向き）</td>
+                            </tr>
+                            <tr>
+                                <th class="col-item">小規模LANの境界</th>
+                                <td><strong>LAN内の通信</strong>（PC➔ハブ➔プリンタ）：<strong>ルータや外のWANを通らずに</strong>内部だけで完結する</td>
+                                <td><strong>外（WAN）への通信</strong>：ハブ ➔ <strong>ルータ（境界・経路制御）</strong> ➔ <strong>ONU（光変換）</strong>の順に出る</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Google Classroom用 あいことばボックス -->
+                <div class="keyword-sheet">
+                    <p class="keyword-instruction">Google Classroomの解答に以下の「あいことば」を入力してください。</p>
+                    <div class="keyword-copy-row">
+                        <div class="keyword-value mono-num" id="keyword-val" style="background:#FFBE0B !important; border:2.5px dashed #050B14 !important; color:#050B14 !important; font-weight:900 !important; text-shadow:none !important;">小包に分けたら長電話マダムも怖くない</div>
+                        <button class="retro-btn btn-copy" id="copy-btn" onclick="copyKeyword()" style="background:linear-gradient(135deg, #00F0FF 0%, #0077FE 100%) !important; color:#050B14 !important; font-weight:900 !important; text-shadow:none !important; border:2px solid #00F0FF !important;">［複写］あいことばをコピー</button>
+                    </div>
+                </div>
+
+                <div class="clear-action-row">
+                    <button class="retro-btn btn-secondary" onclick="openReviewModal()">［教本］通信とLANの仕組み図鑑を見る</button>
+                    <button class="retro-btn" onclick="returnToStageSelect()">［再実験］各工程に戻って自由に触る</button>
+                    <button class="retro-btn btn-primary" onclick="location.reload()">▶ 最初からもう一度体験する</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 工程クリア時のミニ確認オーバーレイ -->
+    <div id="stage-overlay" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-stamp" id="overlay-badge">第一工程 完了</div>
+            <h3 id="overlay-title" class="modal-title">現場の確認テスト</h3>
+            <p id="overlay-desc" class="modal-desc"></p>
+
+            <!-- 体験の定着を測る1問ミニ確認 -->
+            <div id="mini-quiz-box" class="mini-quiz-box">
+                <div class="mini-quiz-q" id="mini-quiz-q"></div>
+                <div class="mini-quiz-Choices" id="mini-quiz-choices"></div>
+                <div class="mini-quiz-feedback hidden" id="mini-quiz-feedback"></div>
+            </div>
+
+            <div class="modal-footer">
+                <button id="next-stage-btn" class="retro-btn btn-primary hidden" onclick="proceedNextStage()">次の工程へ進む ▶</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 通信の仕組み図鑑（全工程復習モーダル review-modal） -->
+    <div id="reviewModal" class="modal-overlay review-modal hidden">
+        <div class="modal-card modal-wide">
+            <div class="modal-header-bar">
+                <h3>■ ねこ村通信局・公式マニュアル（全5工程 復習図鑑）</h3>
+                <button class="retro-btn btn-small" onclick="closeReviewModal()">× 閉じる</button>
+            </div>
+            <div class="manual-scroll-body">
+                <div class="manual-section">
+                    <h4>1. 回線交換方式と「無言時間の非効率」</h4>
+                    <p>送信側と受信側の間に<strong>専用の通信回線</strong>を確立し、通信が終わるまでその回線を<strong>独占</strong>する方式です。</p>
+                    <ul>
+                        <li><strong>長所：</strong>回線を独占するため、通信速度が一定で遅延が少ない。</li>
+                        <li><strong>短所：</strong>通信中は他の人が使えず（「話し中」）、<strong>相手が黙っている（データを送っていない）時間も回線を占有してしまう</strong>ため、回線の利用効率が悪い。</li>
+                    </ul>
+                </div>
+                <div class="manual-section">
+                    <h4>2. パケット交換方式と「分割サイズ（オーバーヘッド）の本質」</h4>
+                    <p>データを<strong>「パケット」</strong>という小さな単位（<strong>ペイロード</strong>）に分割し、それぞれに<strong>「ヘッダ（宛先IP・送信元IP・通し番号）」</strong>を付けて送る方式です。</p>
+                    <div class="manual-diagram-box">
+                        <span class="diag-tag-red">ヘッダ（宛先IP・送信元IP・通し番号 #1/4）</span>
+                        <span>＋</span>
+                        <span class="diag-tag-blue">ペイロード（分割されたデータ本体）</span>
+                        <span>＝ <strong>1個のパケット</strong></span>
+                    </div>
+                    <ul>
+                        <li><strong>なぜ「送信元IPアドレス」もヘッダに必要なのか？：</strong>相手先が「受け取ったよ（ACK）」や「2番が消えたから再送して！」と返事を送り返すために不可欠だからです。</li>
+                        <li><strong>細かく切りすぎるとどうなる？：</strong>すべての箱に同じサイズの「ヘッダ荷札」が付くため、<strong>データ全体に対するヘッダの割合（オーバーヘッド）が膨れ上がって通信効率が落ちる</strong>。だから適度なサイズに分割します。</li>
+                    </ul>
+                </div>
+                <div class="manual-section">
+                    <h4>3. ルータの経路制御と「バッファ溢れ（輻輳）」</h4>
+                    <p><strong>ルータ</strong>はヘッダの宛先を見て最適な経路へパケットを中継します。途中の経路が故障しても別ルートへ迂回できますが、1つのルートに処理能力を超えるパケットが集中すると、ルータ内の待合室（バッファ）から溢れて<strong>パケットロス（消失）</strong>が発生します。</p>
+                </div>
+                <div class="manual-section">
+                    <h4>4. TCP（確実重視）と UDP（即時性重視）の使い分け</h4>
+                    <ul>
+                        <li><strong>TCP：</strong>届かなかったパケットの<strong>再送要求</strong>と、通し番号による<strong>順序の並べ替え</strong>を行い、データを1文字も欠けずに復元する（Web閲覧、メール、注文書・ファイル転送など）。</li>
+                        <li><strong>UDP：</strong>確認応答や再送を行わず、届いたそばからリアルタイムに処理する。一部が欠けてノイズになっても止まらないことが重要な通信に向く（音声通話、ビデオ会議、ライブ配信、オンラインゲームなど）。</li>
+                    </ul>
+                </div>
+                <div class="manual-section">
+                    <h4>5. 小規模LANの構成機器と役割（ONUとルータの決定的な違い）</h4>
+                    <div class="manual-diagram-box">
+                        <span>【外のWAN】</span> ⇔ <span class="diag-tag-green">①ONU(光⇔電気)</span> ⇔ <span class="diag-tag-red">②ルータ(WAN/LAN境界・IP変換)</span> ⇔ <span class="diag-tag-blue">③ハブ(LAN内分岐)</span> ⇔ <span>PC / ④AP(電波)</span>
+                    </div>
+                    <ul>
+                        <li><strong>① <span class="term-tip">ONU<span class="term-tip-popup"><span class="term-tip-header">🔌 ONU</span>光信号と電気信号を翻訳する玄関マシンニャ！</span></span>（回線終端装置）：</strong>屋外の光ファイバー（<strong>光信号</strong>）と屋内のLANケーブル（<strong>電気信号</strong>）を物理的に相互変換する装置。</li>
+                        <li><strong>② <span class="term-tip">ルータ<span class="term-tip-popup"><span class="term-tip-header">🚦 ルータ</span>外(WAN)と内(LAN)の境界を守る関所ニャ！</span></span>：</strong>外のネットワーク（<strong>WAN</strong>）と内のネットワーク（<strong>LAN</strong>）の境界に立ち、経路制御および<strong>プライベートIP（室内用住所）とグローバルIP（外の世界の住所）の変換（NAT/NAPT）</strong>を行う関所装置。</li>
+                        <li><strong>③ スイッチングハブ：</strong>同じLAN内部で複数の機器を分岐する装置。<strong>LAN内のPCからLAN内のプリンタへの印刷はハブだけで折り返すため、外の光回線が故障していても印刷可能。</strong></li>
+                        <li><strong>④ 無線LANアクセスポイント（AP）：</strong>ハブから来た有線LANの電気信号を<strong>Wi-Fi電波</strong>に変換してスマホ等を繋ぐ装置。</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="retro-btn btn-primary" onclick="closeReviewModal()">マニュアルを閉じる</button>
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- パケット解剖レントゲンスコープ（Inspector）モーダル -->
+    <div id="packet-scope-modal" class="modal-overlay hidden" onclick="closePacketScope(event)">
+        <div class="modal-card packet-scope-card" onclick="event.stopPropagation()">
+            <div class="modal-stamp" style="background:#00F0FF;color:#050B14;">🔬 レントゲンスコープ</div>
+            <h3 class="modal-title" style="color:#00F0FF;margin-top:6px;">📦 パケット内部構造（リアルタイム透過解析）</h3>
+            <p class="modal-desc" style="color:#a8c0e0;font-size:0.85rem;">
+                通信線上を走っているパケットを瞬間捕獲して解剖したニャ！<br>
+                「制御用のヘッダ荷札」と「中身のペイロード」に分かれているのがよく分かるニャ！
+            </p>
+            <div class="scope-dissect-box">
+                <div class="scope-header-part">
+                    <div class="scope-part-badge tag-header">🏷 ヘッダ（制御情報荷札）</div>
+                    <div class="scope-kv-grid">
+                        <div class="scope-kv"><span class="k">宛先IP:</span> <span class="v mono-num" id="scope-dst-ip">203.0.113.5 (ねこカフェ)</span></div>
+                        <div class="scope-kv"><span class="k">送信元IP:</span> <span class="v mono-num" id="scope-src-ip">198.51.100.2 (通信局)</span></div>
+                        <div class="scope-kv"><span class="k">通し番号:</span> <span class="v mono-num" id="scope-seq">#2 / 4 パケット</span></div>
+                        <div class="scope-kv"><span class="k">ヘッダ長:</span> <span class="v mono-num">5 バイト (固定長)</span></div>
+                    </div>
+                </div>
+                <div class="scope-plus-sign">＋</div>
+                <div class="scope-payload-part">
+                    <div class="scope-part-badge tag-payload">🎁 ペイロード（データ本体）</div>
+                    <div class="scope-payload-content" id="scope-payload-text">「30袋を」 (5バイト)</div>
+                </div>
+            </div>
+            <div class="scope-footer-stat">
+                <span>📊 このパケットのオーバーヘッド比率: <strong>50%</strong> (ヘッダ 5B / 全体 10B)</span>
+            </div>
+            <div style="margin-top:14px;text-align:center;">
+                <button class="retro-btn btn-primary" onclick="closePacketScope()">解析スコープを閉じる</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 荷札雪崩パニックコンテナ（実験B用） -->
+    <div id="avalanche-container" class="avalanche-container hidden"></div>
+
+    <footer class="postal-footer">
+        <span>BGM: 魔王魂</span>
+    </footer>
+
+    <script src="main.js"></script>
+</body>
+</html>
