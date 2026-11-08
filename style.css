@@ -61,7 +61,7 @@ pre {
 /* ===== HEADER ===== */
 .postal-header {
     background: var(--bakelite-dark);
-    color: var(--paper-cream);
+    color: var(--ink-black);
     border-bottom: 2px solid var(--cyber-cyan);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 240, 255, 0.2);
     padding: 10px 20px;
@@ -70,7 +70,6 @@ pre {
     align-items: center;
     flex-wrap: wrap;
     gap: 10px;
-    box-shadow: 0 3px 0 rgba(40, 30, 54, 0.2);
 }
 
 .postal-brand {
@@ -78,7 +77,14 @@ pre {
     align-items: center;
     gap: 10px;
     font-weight: 900;
-    font-size: 1.02rem;
+    font-size: 1.05rem;
+    color: #F1F5F9;
+}
+
+.brand-text {
+    color: #F1F5F9 !important;
+    font-weight: 900;
+    letter-spacing: 0.02em;
 }
 
 .post-mark {
@@ -232,6 +238,7 @@ pre {
 
 .tag-packet {
     background: var(--postal-green);
+    color: #050B17;
 }
 
 .char-illust {
@@ -262,7 +269,7 @@ pre {
 .vs-emblem {
     align-self: center;
     background: var(--brass-gold);
-    color: #fff;
+    color: #050B17;
     font-weight: 900;
     font-size: 1.15rem;
     width: 50px;
@@ -840,7 +847,7 @@ pre {
 /* ===== STAGE 1: 鮟帝崕隧ｱ繧ｹ繧､繝・メ逶､・亥屓邱壻ｺ､謠帙・辟｡險邏・幻繝ｻ繧､繝ｩ繧､繝ｩ繧ｲ繝ｼ繧ｸ・・===== */
 .switchboard-panel {
     background: var(--panel-metal);
-    color: var(--paper-cream);
+    color: var(--ink-black);
     border: 2px solid rgba(0, 240, 255, 0.5);
     border-radius: 12px;
     padding: 14px;
@@ -1309,7 +1316,7 @@ pre {
 
 .arrival-log-strip {
     background: var(--bakelite-dark);
-    color: var(--paper-cream);
+    color: var(--ink-black);
     border: 2px solid var(--ink-black);
     border-radius: 8px;
     padding: 7px 12px;
@@ -1609,7 +1616,7 @@ pre {
 
 .s5-analyzer-bar {
     background: var(--bakelite-dark);
-    color: var(--paper-cream);
+    color: var(--ink-black);
     border: 2px solid var(--brass-gold);
     border-radius: 8px;
     padding: 7px 12px;
